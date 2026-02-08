@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Film</title>
-  <link rel="stylesheet" href="style.css">
-</head>
 <body data-page="film">
-
-  <h2><a href="index.html">← L i s t e n</a></h2>
   <h1>Film</h1>
 
   <div class="form">
@@ -17,17 +8,15 @@
     </select>
     <input id="title" placeholder="Titel">
     <input id="link" placeholder="Link">
-    <button onclick="addItem()">+</button>
+    <button id="addBtn">+</button>
   </div>
-
-  <hr>
 
   <div id="lists"></div>
 
-  <!-- Firebase + JS -->
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="script.js"></script>
 
+  <!-- App JS -->
+  <script src="script.js"></script>
 </body>
-</html>
