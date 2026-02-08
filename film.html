@@ -1,37 +1,62 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <title>Film</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<!-- Firebase modular SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-  <h2><a href="index.html">← L i s t e n</a></h2>
+  // 1️⃣ Firebase-Konfiguration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
+    authDomain: "liste-j.firebaseapp.com",
+    projectId: "liste-j",
+    storageBucket: "liste-j.firebasestorage.app",
+    messagingSenderId: "950349344673",
+    appId: "1:950349344673:web:707c157b50e02592ea65e0"
+  };
 
+  // 2️⃣ Firebase initialisieren
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const listCollection = collection(db, "lists");
 
-<h1>Film</h1>
+  // 3️⃣ addItem-Funktion
+  window.addItem = async function() {
+    const person = document.getElementById("person").value;
+    const title = document.getElementById("title").value;
+    const link = document.getElementById("link").value;
+    if (!title || !link) return;
 
-<div class="form">
+    await addDoc(listCollection, { person, title, link });
 
-<select id="person">
-  <option value="für Janice">für Janice</option>
-  <option value="für Jiri">für Jiri</option>
-</select>
+    document.getElementById("title").value = "";
+    document.getElementById("link").value = "";
+  };
 
+  // 4️⃣ render-Funktion
+  function render(snapshot) {
+    const container = document.getElementById("lists");
+    container.innerHTML = "";
 
-<input id="title" placeholder="Titel">
+    snapshot.forEach((docSnap) => {
+      const item = docSnap.data();
+      const id = docSnap.id;
 
-<input id="link" placeholder="Link">
+      const div = document.createElement("div");
+      div.className = "item";
 
-<button onclick="addItem()">+</button>
+      div.innerHTML = `
+        <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
+        <button class="deleteBtn">✕</button>
+      `;
 
-</div>
+      div.querySelector(".deleteBtn").onclick = async () => {
+        await deleteDoc(doc(db, "lists", id));
+      };
 
-<hr>
+      container.appendChild(div);
+    });
+  }
 
-<div id="lists"></div>
+  // 5️⃣ Echtzeit-Updates
+  onSnapshot(listCollection, render);
 
-<script src="script.js"></script>
-</body>
-</html>
+</script>
