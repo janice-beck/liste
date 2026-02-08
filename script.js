@@ -20,7 +20,11 @@ function addItem() {
 
   if (!title || !link) return;
 
-  listCollection.add({ person, title, link });
+  listCollection.add({
+    person: person,
+    title: title,
+    link: link
+  });
 
   document.getElementById("title").value = "";
   document.getElementById("link").value = "";
@@ -39,9 +43,14 @@ function render(snapshot) {
 
     const div = document.createElement("div");
     div.className = "item";
-    div.innerHTML = `
-      <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-    `;
+
+    const a = document.createElement("a");
+    a.href = item.link;
+    a.target = "_blank";
+    a.textContent = item.title;
+
+    div.appendChild(a);
+    div.append(" – " + item.person);
 
     container.appendChild(div);
   });
