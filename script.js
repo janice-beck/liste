@@ -60,12 +60,9 @@ function render(snapshot) {
     div.className = "item";
     div.innerHTML = `
       <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-      <button class="deleteBtn">✕</button>
+
     `;
 
-    // Delete-Button
-    div.querySelector(".deleteBtn").onclick = () => {
-      listCollection.doc(id).delete();
     };
 
     container.appendChild(div);
