@@ -1,7 +1,6 @@
 body {
   font-family: 'Times New Roman', Times, serif;
-  padding: 80px;
-  max-width: 600px;
+  padding: 60px;
   margin: auto;
 }
 
@@ -12,7 +11,7 @@ h1 {
   width: 100%; /* volle Breite mit Rand */
   padding-bottom: 10px;
   border-bottom: 2px solid black;
-  font-size: 140px;
+  font-size: 110px;
 
 }
 
@@ -31,14 +30,13 @@ h2 {
 
 .categories li {
 margin: 40px 0;
-  padding: 5px 0 10px 10px;
   border-bottom: 1px solid black;
 }
 
 .categories a {
   color: black;
   font-weight: 50;
-  font-size: 140px;
+  font-size: 110px;
   text-decoration: none;
 }
 
@@ -79,14 +77,27 @@ li {
 }
 
 
-
 .item {
   position: relative;
-  padding: 10px 40px 10px 10px; /* Platz für das Kreuz rechts */
+  width: 100%;
+  padding-right: 80px;
   border-bottom: 1px solid black;
   font-family: 'Times New Roman', Times, serif;
   font-size: 80px;
 }
+
+
+.deleteBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 
 .item a {
   text-decoration: none;
@@ -97,18 +108,7 @@ li {
   text-decoration: underline;
 }
 
-/* Lösch-Kreuz */
-.deleteBtn {
-  position: absolute;
-  right: 0px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: rgb(0, 0, 0);
-  font-size: 90px;
-  cursor: pointer;
-}
+
 
 .deleteBtn:hover {
   color: rgb(193, 193, 193);
@@ -121,7 +121,7 @@ li {
   border-bottom: 1px solid black;
   padding: 10px 0;
   margin-bottom: 60px;
-  font-size: 140px;
+  font-size: 60px;
   font-family: 'Times New Roman', Times, serif;
   background: transparent;
   outline: none;
@@ -145,7 +145,7 @@ li {
   background: transparent;
   border: 1px solid black;
   padding: 10px 30px;
-  font-size: 140px;
+  font-size: 90px;
   cursor: pointer;
 }
 
