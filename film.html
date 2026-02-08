@@ -1,9 +1,9 @@
-<!-- Firebase modular SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+<!-- Firebase JS -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-  // 1️⃣ Firebase-Konfiguration
+<script>
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
     authDomain: "liste-j.firebaseapp.com",
@@ -13,50 +13,48 @@
     appId: "1:950349344673:web:707c157b50e02592ea65e0"
   };
 
-  // 2️⃣ Firebase initialisieren
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const listCollection = collection(db, "lists");
+  // Firebase initialisieren
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const listCollection = db.collection("lists");
 
-  // 3️⃣ addItem-Funktion
-  window.addItem = async function() {
+  // addItem global
+  function addItem() {
     const person = document.getElementById("person").value;
     const title = document.getElementById("title").value;
     const link = document.getElementById("link").value;
     if (!title || !link) return;
 
-    await addDoc(listCollection, { person, title, link });
-
-    document.getElementById("title").value = "";
-    document.getElementById("link").value = "";
-  };
-
-  // 4️⃣ render-Funktion
-  function render(snapshot) {
-    const container = document.getElementById("lists");
-    container.innerHTML = "";
-
-    snapshot.forEach((docSnap) => {
-      const item = docSnap.data();
-      const id = docSnap.id;
-
-      const div = document.createElement("div");
-      div.className = "item";
-
-      div.innerHTML = `
-        <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-        <button class="deleteBtn">✕</button>
-      `;
-
-      div.querySelector(".deleteBtn").onclick = async () => {
-        await deleteDoc(doc(db, "lists", id));
-      };
-
-      container.appendChild(div);
+    listCollection.add({ person, title, link }).then(() => {
+      document.getElementById("title").value = "";
+      document.getElementById("link").value = "";
     });
   }
 
-  // 5️⃣ Echtzeit-Updates
-  onSnapshot(listCollection, render);
+  // render-Funktion
+  function render() {
+    const container = document.getElementById("lists");
+    container.innerHTML = "";
 
+    listCollection.get().then(snapshot => {
+      snapshot.forEach(docSnap => {
+        const item = docSnap.data();
+        const id = docSnap.id;
+
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
+          <button class="deleteBtn">✕</button>
+        `;
+        div.querySelector(".deleteBtn").onclick = () => {
+          listCollection.doc(id).delete();
+        };
+        container.appendChild(div);
+      });
+    });
+  }
+
+  // Echtzeit Updates
+  listCollection.onSnapshot(render);
 </script>
