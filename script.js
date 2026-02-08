@@ -56,7 +56,7 @@ function render(snapshot) {
     div.className = "item";
     div.innerHTML = `
       <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-      <button class="deleteBtn">✕</button>
+
     `;
 
     div.querySelector(".deleteBtn").onclick = () => {
