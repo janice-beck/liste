@@ -1,0 +1,150 @@
+body {
+  font-family: 'Times New Roman', Times, serif;
+  padding: 40px;
+  max-width: 600px;
+  margin: auto;
+}
+
+h1 {
+  position: fixed;
+  letter-spacing: 24px;
+  background: white;
+  width: 100%; /* volle Breite mit Rand */
+  padding-bottom: 10px;
+  border-bottom: 2px solid black;
+  font-size: 40px;
+
+}
+
+#person {
+  margin-top: 100px; /* Abstand über dem Select */
+}
+
+.categories {
+  list-style-type: none;
+    margin-top: 100px;
+}
+
+.categories li {
+margin: 20px 0;
+  padding: 5px 0 10px 10px;
+  border-bottom: 1px solid black;
+}
+
+.categories a {
+  color: black;
+  font-weight: 50;
+  font-size: 40px;
+  text-decoration: none;
+}
+
+.categories a:hover {
+  text-decoration: none;
+}
+
+
+
+.disabled {
+  opacity: 0.4;
+}
+
+.controls {
+        margin-top: 100px;
+
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 0px;
+  padding: 0px;
+}
+
+
+.item {
+  position: relative;
+  padding: 10px 40px 10px 10px; /* Platz für das Kreuz rechts */
+  border-bottom: 1px solid black;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 24px;
+}
+
+.item a {
+  text-decoration: none;
+  color: black;
+}
+
+.item a:hover {
+  text-decoration: underline;
+}
+
+/* Lösch-Kreuz */
+.deleteBtn {
+  position: absolute;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  color: rgb(193, 193, 193);
+}
+
+.form input,
+.form select {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid black;
+  padding: 10px 0;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-family: 'Times New Roman', Times, serif;
+  background: transparent;
+  outline: none;
+}
+
+/* Placeholder Style */
+.form input::placeholder {
+  color: #777;
+}
+
+/* Select Pfeil entfernen (modern look) */
+.form select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+}
+
+/* Button minimal */
+.form button {
+  background: transparent;
+  border: 1px solid black;
+  padding: 10px 30px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background: black;
+  color: white;
+}
