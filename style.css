@@ -12,7 +12,7 @@ h1 {
   width: 100%; /* volle Breite mit Rand */
   padding-bottom: 10px;
   border-bottom: 2px solid black;
-  font-size: 40px;
+  font-size: 80px;
 
 }
 
@@ -34,7 +34,7 @@ margin: 20px 0;
 .categories a {
   color: black;
   font-weight: 50;
-  font-size: 40px;
+  font-size: 80px;
   text-decoration: none;
 }
 
@@ -80,7 +80,7 @@ li {
   padding: 10px 40px 10px 10px; /* Platz für das Kreuz rechts */
   border-bottom: 1px solid black;
   font-family: 'Times New Roman', Times, serif;
-  font-size: 24px;
+  font-size: 80px;
 }
 
 .item a {
@@ -101,7 +101,7 @@ li {
   background: transparent;
   border: none;
   color: rgb(0, 0, 0);
-  font-size: 20px;
+  font-size: 40px;
   cursor: pointer;
 }
 
@@ -116,7 +116,7 @@ li {
   border-bottom: 1px solid black;
   padding: 10px 0;
   margin-bottom: 30px;
-  font-size: 24px;
+  font-size: 80px;
   font-family: 'Times New Roman', Times, serif;
   background: transparent;
   outline: none;
@@ -140,7 +140,7 @@ li {
   background: transparent;
   border: 1px solid black;
   padding: 10px 30px;
-  font-size: 20px;
+  font-size: 80px;
   cursor: pointer;
 }
 
