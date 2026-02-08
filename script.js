@@ -1,4 +1,6 @@
-// ⚡ Firebase modular / compat (kompatibel für GitHub Pages)
+// =====================
+// Firebase Konfiguration
+// =====================
 const firebaseConfig = {
   apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
   authDomain: "liste-j.firebaseapp.com",
@@ -12,15 +14,20 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// === Helfer: Welche Collection für diese Seite? ===
-const page = document.body.dataset.page || "film"; // Default: "film"
+// =====================
+// Collection je nach Seite
+// =====================
+const page = document.body.dataset.page || "film"; // Default: film
 const listCollection = db.collection(`lists_${page}`);
 
-// === addItem-Funktion global machen ===
+// =====================
+// addItem-Funktion
+// =====================
 function addItem() {
   const person = document.getElementById("person").value;
   const title = document.getElementById("title").value;
   const link = document.getElementById("link").value;
+
   if (!title || !link) return;
 
   listCollection.add({ person, title, link }).then(() => {
@@ -28,38 +35,39 @@ function addItem() {
     document.getElementById("link").value = "";
   });
 }
-window.addItem = addItem; // global verfügbar für Button
 
-// === render-Funktion ===
-function render() {
+// EventListener für Button
+document.getElementById("addBtn").addEventListener("click", addItem);
+
+// =====================
+// render-Funktion
+// =====================
+function render(snapshot) {
   const container = document.getElementById("lists");
-  if (!container) return; // Sicherheit
+  if (!container) return;
 
   container.innerHTML = "";
 
-  listCollection.get().then(snapshot => {
-    snapshot.forEach(docSnap => {
-      const item = docSnap.data();
-      const id = docSnap.id;
+  snapshot.forEach(docSnap => {
+    const item = docSnap.data();
+    const id = docSnap.id;
 
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `
-        <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-        <button class="deleteBtn">✕</button>
-      `;
+    const div = document.createElement("div");
+    div.className = "item";
+    div.innerHTML = `
+      <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
+      <button class="deleteBtn">✕</button>
+    `;
 
-      div.querySelector(".deleteBtn").onclick = () => {
-        listCollection.doc(id).delete();
-      };
+    div.querySelector(".deleteBtn").onclick = () => {
+      listCollection.doc(id).delete();
+    };
 
-      container.appendChild(div);
-    });
+    container.appendChild(div);
   });
 }
 
-// === Echtzeit-Updates automatisch ===
+// =====================
+// Echtzeit-Updates
+// =====================
 listCollection.onSnapshot(render);
-
-// === Initial render ===
-render();
