@@ -1,60 +1,98 @@
-<!-- Firebase JS -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Film</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- CSS kann bleiben wie bei dir -->
+</head>
+<body>
 
-<script>
-  // Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
-    authDomain: "liste-j.firebaseapp.com",
-    projectId: "liste-j",
-    storageBucket: "liste-j.firebasestorage.app",
-    messagingSenderId: "950349344673",
-    appId: "1:950349344673:web:707c157b50e02592ea65e0"
-  };
+  <h2><a href="index.html">← L i s t e n</a></h2>
+  <h1>Film</h1>
 
-  // Firebase initialisieren
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  const listCollection = db.collection("lists");
+  <div class="form">
+    <select id="person">
+      <option value="für Janice">für Janice</option>
+      <option value="für Jiri">für Jiri</option>
+    </select>
 
-  // addItem global
-  function addItem() {
-    const person = document.getElementById("person").value;
-    const title = document.getElementById("title").value;
-    const link = document.getElementById("link").value;
-    if (!title || !link) return;
+    <input id="title" placeholder="Titel">
+    <input id="link" placeholder="Link">
+    <button onclick="addItem()">+</button>
+  </div>
 
-    listCollection.add({ person, title, link }).then(() => {
-      document.getElementById("title").value = "";
-      document.getElementById("link").value = "";
-    });
-  }
+  <hr>
 
-  // render-Funktion
-  function render() {
-    const container = document.getElementById("lists");
-    container.innerHTML = "";
+  <!-- Container für die Liste -->
+  <div id="lists"></div>
 
-    listCollection.get().then(snapshot => {
-      snapshot.forEach(docSnap => {
-        const item = docSnap.data();
-        const id = docSnap.id;
+  <!-- Firebase + JS -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase Config (von deinem Projekt)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
+      authDomain: "liste-j.firebaseapp.com",
+      projectId: "liste-j",
+      storageBucket: "liste-j.firebasestorage.app",
+      messagingSenderId: "950349344673",
+      appId: "1:950349344673:web:707c157b50e02592ea65e0"
+    };
 
-        const div = document.createElement("div");
-        div.className = "item";
-        div.innerHTML = `
-          <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-          <button class="deleteBtn">✕</button>
-        `;
-        div.querySelector(".deleteBtn").onclick = () => {
-          listCollection.doc(id).delete();
-        };
-        container.appendChild(div);
+    // Firebase initialisieren
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const listCollection = db.collection("lists");
+
+    // addItem-Funktion global (Button kann sie aufrufen)
+    function addItem() {
+      const person = document.getElementById("person").value;
+      const title = document.getElementById("title").value;
+      const link = document.getElementById("link").value;
+      if (!title || !link) return;
+
+      listCollection.add({ person, title, link })
+        .then(() => {
+          document.getElementById("title").value = "";
+          document.getElementById("link").value = "";
+        });
+    }
+
+    // render-Funktion
+    function render() {
+      const container = document.getElementById("lists");
+      if (!container) return; // Sicherheitscheck
+
+      container.innerHTML = "";
+
+      listCollection.get().then(snapshot => {
+        snapshot.forEach(docSnap => {
+          const item = docSnap.data();
+          const id = docSnap.id;
+
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `
+            <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
+            <button class="deleteBtn">✕</button>
+          `;
+
+          div.querySelector(".deleteBtn").onclick = () => {
+            listCollection.doc(id).delete();
+          };
+
+          container.appendChild(div);
+        });
       });
-    });
-  }
+    }
 
-  // Echtzeit Updates
-  listCollection.onSnapshot(render);
-</script>
+    // Echtzeit-Updates automatisch
+    listCollection.onSnapshot(render);
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
