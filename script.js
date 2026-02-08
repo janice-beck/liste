@@ -17,12 +17,13 @@ const db = firebase.firestore();
 // =====================
 // Collection je nach Seite
 // =====================
-const page = document.body.dataset.page || "film"; // Default: film
+const page = document.body.dataset.page || "film";
 const listCollection = db.collection(`lists_${page}`);
-console.log("Page:", page, "Collection:", listCollection.path);
+
+console.log("Page:", page);
 
 // =====================
-// addItem-Funktion
+// addItem
 // =====================
 function addItem() {
   const person = document.getElementById("person").value;
@@ -37,39 +38,33 @@ function addItem() {
   });
 }
 
-// EventListener für Button
+// Button
 document.getElementById("addBtn").addEventListener("click", addItem);
 
 // =====================
-// render-Funktion
+// Render
 // =====================
 function render(snapshot) {
   const container = document.getElementById("lists");
-  if (!container) {
-    console.error("Container #lists existiert nicht!");
-    return;
-  }
+  if (!container) return;
 
   container.innerHTML = "";
 
-  snapshot.forEach(docSnap => {
-    const item = docSnap.data();
-    const id = docSnap.id;
+  snapshot.forEach(doc => {
+    const item = doc.data();
 
     const div = document.createElement("div");
     div.className = "item";
+
     div.innerHTML = `
       <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-
     `;
-
-    };
 
     container.appendChild(div);
   });
 }
 
 // =====================
-// Echtzeit-Updates
+// Live Sync
 // =====================
 listCollection.onSnapshot(render);
