@@ -1,25 +1,34 @@
-// Firebase Config
+// =====================
+// Firebase Konfiguration
+// =====================
 const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
+  apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
+  authDomain: "liste-j.firebaseapp.com",
   projectId: "liste-j",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
+  storageBucket: "liste-j.firebasestorage.app",
+  messagingSenderId: "950349344673",
+  appId: "1:950349344673:web:707c157b50e02592ea65e0"
 };
 
+// Firebase initialisieren
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Welche Collection?
-const page = document.body.dataset.page || "film";
+// =====================
+// Collection je nach Seite
+// =====================
+const page = document.body.dataset.page || "film"; // Default: film
 const listCollection = db.collection(`lists_${page}`);
+console.log("Page:", page, "Collection:", listCollection.path);
 
-// Add Item
+// =====================
+// addItem-Funktion
+// =====================
 function addItem() {
   const person = document.getElementById("person").value;
   const title = document.getElementById("title").value;
   const link = document.getElementById("link").value;
+
   if (!title || !link) return;
 
   listCollection.add({ person, title, link }).then(() => {
@@ -28,13 +37,18 @@ function addItem() {
   });
 }
 
-// EventListener
+// EventListener für Button
 document.getElementById("addBtn").addEventListener("click", addItem);
 
-// Render Funktion
+// =====================
+// render-Funktion
+// =====================
 function render(snapshot) {
   const container = document.getElementById("lists");
-  if (!container) return;
+  if (!container) {
+    console.error("Container #lists existiert nicht!");
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -49,6 +63,7 @@ function render(snapshot) {
       <button class="deleteBtn">✕</button>
     `;
 
+    // Delete-Button
     div.querySelector(".deleteBtn").onclick = () => {
       listCollection.doc(id).delete();
     };
@@ -57,5 +72,7 @@ function render(snapshot) {
   });
 }
 
+// =====================
 // Echtzeit-Updates
+// =====================
 listCollection.onSnapshot(render);
