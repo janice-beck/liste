@@ -5,7 +5,7 @@
   <title>Buch</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body data-page="buch">
+<body data-page="film">
 
   <h2><a href="index.html">← L i s t e n</a></h2>
   <h1>Buch</h1>
@@ -15,18 +15,21 @@
       <option value="für Janice">für Janice</option>
       <option value="für Jiri">für Jiri</option>
     </select>
+
     <input id="title" placeholder="Titel">
     <input id="link" placeholder="Link">
-    <button onclick="addItem()">+</button>
+    <button id="addBtn">+</button>
   </div>
 
   <hr>
 
   <div id="lists"></div>
 
-  <!-- Firebase + JS -->
+  <!-- Firebase Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- App JS -->
   <script src="script.js"></script>
 
 </body>
