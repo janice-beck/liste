@@ -1,33 +1,25 @@
-// =====================
-// Firebase Konfiguration
-// =====================
+// Firebase Config
 const firebaseConfig = {
-  apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
-  authDomain: "liste-j.firebaseapp.com",
+  apiKey: "...",
+  authDomain: "...",
   projectId: "liste-j",
-  storageBucket: "liste-j.firebasestorage.app",
-  messagingSenderId: "950349344673",
-  appId: "1:950349344673:web:707c157b50e02592ea65e0"
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
 };
 
-// Firebase initialisieren
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// =====================
-// Collection je nach Seite
-// =====================
-const page = document.body.dataset.page || "film"; // Default: film
+// Welche Collection?
+const page = document.body.dataset.page || "film";
 const listCollection = db.collection(`lists_${page}`);
 
-// =====================
-// addItem-Funktion
-// =====================
+// Add Item
 function addItem() {
   const person = document.getElementById("person").value;
   const title = document.getElementById("title").value;
   const link = document.getElementById("link").value;
-
   if (!title || !link) return;
 
   listCollection.add({ person, title, link }).then(() => {
@@ -36,12 +28,10 @@ function addItem() {
   });
 }
 
-// EventListener für Button
+// EventListener
 document.getElementById("addBtn").addEventListener("click", addItem);
 
-// =====================
-// render-Funktion
-// =====================
+// Render Funktion
 function render(snapshot) {
   const container = document.getElementById("lists");
   if (!container) return;
@@ -56,7 +46,7 @@ function render(snapshot) {
     div.className = "item";
     div.innerHTML = `
       <a href="${item.link}" target="_blank">${item.title}</a> – ${item.person}
-
+      <button class="deleteBtn">✕</button>
     `;
 
     div.querySelector(".deleteBtn").onclick = () => {
@@ -67,7 +57,5 @@ function render(snapshot) {
   });
 }
 
-// =====================
 // Echtzeit-Updates
-// =====================
 listCollection.onSnapshot(render);
