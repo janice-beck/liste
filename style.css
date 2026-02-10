@@ -157,11 +157,33 @@ li {
   background: transparent;
   border: 1px solid black;
   padding: 10px 30px;
-  font-size: 90px;
+  font-size: 80px;
   cursor: pointer;
 }
 
 .form button:hover {
   background: black;
   color: white;
+}
+
+.delete {
+  background: black;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  font-size: 48px;
+  margin-left: 10px;
+  transition: 0.2s;
+}
+
+
+.tag {
+  cursor: pointer;
+  margin-right: 6px;
+color: rgb(108, 108, 108);
+
+}
+
+.tag:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
