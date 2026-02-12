@@ -8,6 +8,8 @@ const firebaseConfig = {
 };
 
 let activeGenre = null;
+let editId = null;
+
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
@@ -20,27 +22,27 @@ function addItem() {
   const title = document.getElementById("title").value;
   const link = document.getElementById("link").value;
   const genres = document.getElementById("genres").value
-  .split(",")
-  .map(g => g.trim())
-  .filter(g => g);
-
+    .split(",")
+    .map(g => g.trim())
+    .filter(g => g);
 
   if (!title || !link) return;
 
-listCollection.add({
-  person,
-  title,
-  link,
-  genres
-});
+const data = { person, title, link, genres, done: false };
 
-document.getElementById("genres").value = "";
-
-
+  if (editId) {
+    listCollection.doc(editId).update(data);
+    editId = null;
+    document.getElementById("addBtn").textContent = "+";
+  } else {
+    listCollection.add(data);
+  }
 
   document.getElementById("title").value = "";
   document.getElementById("link").value = "";
+  document.getElementById("genres").value = "";
 }
+
 
 document.getElementById("addBtn").addEventListener("click", addItem);
 
@@ -59,6 +61,24 @@ function render(snapshot) {
     const div = document.createElement("div");
     div.className = "item";
 
+    const checkbox = document.createElement("input");
+checkbox.type = "checkbox";
+checkbox.checked = item.done === true;
+
+checkbox.addEventListener("change", () => {
+  listCollection.doc(doc.id).update({
+    done: checkbox.checked
+  });
+
+  if (item.done) {
+  div.style.opacity = "0.5";
+  div.style.textDecoration = "line-through";
+}
+
+
+});
+
+
     const a = document.createElement("a");
     a.href = item.link;
     a.target = "_blank";
@@ -70,10 +90,19 @@ del.className = "delete";
 
 
     // LÖSCHEN
-    del.addEventListener("click", () => {
-      listCollection.doc(doc.id).delete();
-    });
+// BEARBEITEN
+del.addEventListener("click", () => {
+  document.getElementById("person").value = item.person;
+  document.getElementById("title").value = item.title;
+  document.getElementById("link").value = item.link;
+  document.getElementById("genres").value = item.genres ? item.genres.join(", ") : "";
 
+  editId = doc.id;
+  document.getElementById("addBtn").textContent = "✓";
+});
+
+
+div.appendChild(checkbox);
     div.appendChild(a);
     div.append(" – " + item.person);
     if (item.genres && item.genres.length) {
