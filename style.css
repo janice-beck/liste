@@ -188,3 +188,100 @@ color: rgb(108, 108, 108);
   opacity: 1;
   text-decoration: underline;
 }
+
+
+/* Custom Checkbox */
+
+.item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  border: 2px solid #000000;
+  margin-right: 20px;
+  cursor: pointer;
+  position: relative;
+  top: 6px;
+}
+
+/* hover */
+
+.item input[type="checkbox"]:hover {
+  border-color: black;
+}
+
+/* checked */
+
+.item input[type="checkbox"]:checked {
+  background: black;
+  border-color: black;
+}
+
+/* checkmark */
+
+.item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+
+@media (min-width: 900px) {
+
+body {
+  font-size: 50px;
+}
+
+/* Headlines */
+
+h1 {
+  font-size: 48px;
+  letter-spacing: 10px;
+}
+
+h2 a {
+  font-size: 50px;
+}
+
+/* Kategorien */
+
+.categories a {
+  font-size: 50px;
+}
+
+/* Form */
+
+#person,
+.form input,
+.form select {
+  font-size: 50px;
+}
+
+.form button {
+  font-size: 50px;
+}
+
+/* List items */
+
+.item {
+  font-size: 50px;
+}
+
+.delete {
+  font-size: 30px;
+}
+
+/* Genres */
+
+.genres,
+.tag {
+  font-size: 50px;
+}
+
+}
