@@ -1,0 +1,92 @@
+// --- Firebase Config ---
+const firebaseConfig = {
+  apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
+  authDomain: "liste-j.firebaseapp.com",
+  projectId: "liste-j"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// --- Variablen ---
+const listCollection = db.collection("lists_private");
+const addBtn = document.getElementById("addBtn");
+const titleInput = document.getElementById("title");
+const listsContainer = document.getElementById("lists");
+let editId = null;
+
+// --- Add Item ---
+function addItem() {
+  const title = titleInput.value.trim();
+  if (!title) return; // nichts speichern, wenn leer
+
+  const data = { title, done: false };
+
+  if (editId) {
+    listCollection.doc(editId).update(data);
+    editId = null;
+    addBtn.textContent = "+";
+  } else {
+    listCollection.add(data);
+  }
+
+  titleInput.value = "";
+}
+
+// --- Button Listener ---
+addBtn.addEventListener("click", addItem);
+
+// --- Render Funktion ---
+function render(snapshot) {
+  listsContainer.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const item = doc.data();
+
+    const div = document.createElement("div");
+    div.className = "item";
+
+    // Text
+    const text = document.createElement("span");
+    text.textContent = item.title;
+
+    // Checkbox
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = item.done;
+
+    checkbox.addEventListener("change", () => {
+      listCollection.doc(doc.id).update({ done: checkbox.checked });
+    });
+
+    // Bearbeiten Button
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✕";
+    editBtn.className = "delete";
+
+    editBtn.addEventListener("click", () => {
+      titleInput.value = item.title;
+      editId = doc.id;
+      addBtn.textContent = "✓";
+    });
+
+    // Aktionen Container rechts
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    actions.appendChild(checkbox);
+    actions.appendChild(editBtn);
+
+    // erledigt durchstreichen
+    if (item.done) {
+      div.style.opacity = 0.5;
+      div.style.textDecoration = "line-through";
+    }
+
+    // Elemente anhängen
+    div.appendChild(text);
+    div.appendChild(actions);
+    listsContainer.appendChild(div);
+  });
+}
+
+// --- Echtzeit Updates ---
+listCollection.onSnapshot(render);

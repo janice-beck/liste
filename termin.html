@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Termine</title>
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body data-page="termin" class="termin">
+
+<h2><a href="index.html">← L i s t e n</a></h2>
+<h1>Termine</h1>
+
+<div class="form termin-form">
+  <input id="title" placeholder="Titel">
+  <input type="text" id="date" placeholder="Datum / Zeit">
+  <button id="addBtn">+</button>
+</div>
+
+<hr>
+
+<div id="lists"></div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script src="termin.js?v=1"></script>
+</body>
+</html>
