@@ -307,7 +307,7 @@ body.private .form input {
 
 /* Nur für die geheime / private Liste */
 body.private .form.private-form {
-  padding-top: 100px;   /* Abstand vom Header */
+  padding-top: 300px;   /* Abstand vom Header */
 }
 
 
