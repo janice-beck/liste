@@ -285,3 +285,62 @@ h2 a {
 }
 
 }
+
+
+
+/* --- Private Liste spezifisch --- */
+body.private h1 {
+  font-size: 40px;       /* kleiner als normal */
+  letter-spacing: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid black;
+}
+
+body.private h2 a {
+  font-size: 40px;       /* kleiner Link */
+}
+
+body.private .form input {
+  font-size: 40px;       /* kleinere Inputs */
+  margin-bottom: 20px;
+}
+
+/* Nur für die geheime / private Liste */
+body.private .form.private-form {
+  padding-top: 100px;   /* Abstand vom Header */
+}
+
+
+body.private .form button {
+  font-size: 40px;       
+  padding: 5px 20px;
+}
+
+body.private .item {
+  font-size: 40px;       /* kleinere Listeneinträge */
+  padding-right: 80px;   /* genug Platz rechts für Checkbox + Button */
+}
+
+/* Checkbox + Bearbeiten Button rechtsbündig */
+body.private .item .actions input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+body.private .item .actions .delete {
+  font-size: 20px;
+  padding: 2px 6px;
+}
+
+body.termin .form.termin-form {
+  padding-top: 300px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+body.termin .form.termin-form input,
+body.termin .form.termin-form button {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
