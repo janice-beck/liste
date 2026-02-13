@@ -17,13 +17,31 @@
   <li><a href="musik.html">Musik</a></li>
   <li><a href="serie.html">Serie</a></li>
   <li><a href="serie.html">Podcast</a></li>
-
   <li><a href="dok.html">Doku</a></li>
+  <a href="geheime-liste.html" id="privateLink">Interims</a>
+
 
 </ul>
 
 
 </div>
+
+<script>
+const PRIVATE_PASSWORD = "1. mai";   
+
+document.getElementById("privateLink").addEventListener("click", e => {
+  e.preventDefault();
+
+  const entered = prompt("Passwort:");
+
+  if (entered === PRIVATE_PASSWORD) {
+    window.location.href = "geheime-liste.html";
+  } else {
+    alert("Falsches Passwort");
+  }
+});
+</script>
+
 
 </body>
 </html>
