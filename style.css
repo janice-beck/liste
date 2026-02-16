@@ -171,8 +171,10 @@ li {
   background: black;
   color: rgb(255, 255, 255);
   cursor: pointer;
+  width:40px;
+  height: 40px;
   font-size: 48px;
-  margin-left: 10px;
+  margin-right: 70px;
   transition: 0.2s;
 }
 
@@ -180,7 +182,7 @@ li {
 .tag {
   cursor: pointer;
   margin-right: 6px;
-color: rgb(108, 108, 108);
+color: rgb(0, 198, 66);
 
 }
 
@@ -195,13 +197,12 @@ color: rgb(108, 108, 108);
 .item input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border: 2px solid #000000;
   margin-right: 20px;
   cursor: pointer;
   position: relative;
-  top: 6px;
 }
 
 /* hover */
@@ -222,12 +223,12 @@ color: rgb(108, 108, 108);
 .item input[type="checkbox"]:checked::after {
   content: "";
   position: absolute;
-  left: 4px;
-  top: 0px;
-  width: 5px;
-  height: 10px;
+  left: 12px;
+  top: 6px;
+  width: 10px;
+  height: 18px;
   border: solid white;
-  border-width: 0 2px 2px 0;
+  border-width: 0 3px 3px 0;
   transform: rotate(45deg);
 }
 
@@ -286,7 +287,36 @@ h2 a {
 
 }
 
+/* Container für rechte Aktionen */
+.item .actions {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 18px; /* Abstand zwischen Checkbox und Button */
+}
 
+/* Checkbox im Actions Container */
+.item .actions input[type="checkbox"] {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Bearbeiten Button klein */
+.item .actions .delete {
+  font-size: 20px;
+  padding: 2px 6px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+  line-height: 1;
+}
 
 /* --- Private Liste spezifisch --- */
 body.private h1 {
@@ -307,7 +337,7 @@ body.private .form input {
 
 /* Nur für die geheime / private Liste */
 body.private .form.private-form {
-  padding-top: 300px;   /* Abstand vom Header */
+  padding-top: 100px;   /* Abstand vom Header */
 }
 
 
@@ -323,8 +353,8 @@ body.private .item {
 
 /* Checkbox + Bearbeiten Button rechtsbündig */
 body.private .item .actions input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 40px;
+  height: 40px;
 }
 
 body.private .item .actions .delete {
@@ -343,4 +373,3 @@ body.termin .form.termin-form button {
   font-size: 40px;
   margin-bottom: 20px;
 }
-
