@@ -50,9 +50,17 @@ function render(snapshot) {
   const container = document.getElementById("lists");
   if (!container) return;
 
-  container.innerHTML = "";
+container.innerHTML = "";
 
-  snapshot.forEach(doc => {
+const docs = snapshot.docs
+  .sort((a, b) => {
+    const ad = a.data().done ? 1 : 0;
+    const bd = b.data().done ? 1 : 0;
+    return ad - bd; // offene zuerst
+  })
+
+docs.forEach(doc => {
+
     const item = doc.data();
 
     if (activeGenre && (!item.genres || !item.genres.includes(activeGenre))) return;
