@@ -52,82 +52,83 @@ function render(snapshot) {
 
   container.innerHTML = "";
 
- snapshot.forEach(doc => {
-  const item = doc.data();
+  snapshot.forEach(doc => {
+    const item = doc.data();
 
-  if (activeGenre && (!item.genres || !item.genres.includes(activeGenre))) return;
+    if (activeGenre && (!item.genres || !item.genres.includes(activeGenre))) return;
 
-
+    // Haupt-Item-Container
     const div = document.createElement("div");
     div.className = "item";
 
-    const checkbox = document.createElement("input");
-checkbox.type = "checkbox";
-checkbox.checked = item.done === true;
-
-checkbox.addEventListener("change", () => {
-  listCollection.doc(doc.id).update({
-    done: checkbox.checked
-  });
-
-  if (item.done) {
-  div.style.opacity = "0.5";
-  div.style.textDecoration = "line-through";
-}
-
-
-});
-
-
+    // Link / Titel
     const a = document.createElement("a");
     a.href = item.link;
     a.target = "_blank";
     a.textContent = item.title;
 
-  const del = document.createElement("button");
-del.textContent = "✕";
-del.className = "delete";
+    // Bearbeiten-Button
+    const del = document.createElement("button");
+    del.textContent = "✕";
+    del.className = "delete";
 
+    del.addEventListener("click", () => {
+      document.getElementById("person").value = item.person;
+      document.getElementById("title").value = item.title;
+      document.getElementById("link").value = item.link;
+      document.getElementById("genres").value = item.genres ? item.genres.join(", ") : "";
 
-    // LÖSCHEN
-// BEARBEITEN
-del.addEventListener("click", () => {
-  document.getElementById("person").value = item.person;
-  document.getElementById("title").value = item.title;
-  document.getElementById("link").value = item.link;
-  document.getElementById("genres").value = item.genres ? item.genres.join(", ") : "";
+      editId = doc.id;
+      document.getElementById("addBtn").textContent = "✓";
+    });
 
-  editId = doc.id;
-  document.getElementById("addBtn").textContent = "✓";
-});
+    // Checkbox
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = item.done === true;
 
+    checkbox.addEventListener("change", () => {
+      listCollection.doc(doc.id).update({ done: checkbox.checked });
+    });
 
-div.appendChild(checkbox);
+    // Actions-Container (rechts)
+    const actions = document.createElement("div");
+    actions.className = "actions";
+    actions.appendChild(checkbox);
+    actions.appendChild(del);
+
+    // Append alles zum div
     div.appendChild(a);
     div.append(" – " + item.person);
+
     if (item.genres && item.genres.length) {
-  const g = document.createElement("div");
-  g.className = "genres";
-item.genres.forEach(genre => {
-  const tag = document.createElement("span");
-  tag.textContent = "#" + genre + " ";
-  tag.className = "tag";
+      const g = document.createElement("div");
+      g.className = "genres";
+      item.genres.forEach(genre => {
+        const tag = document.createElement("span");
+        tag.textContent = "#" + genre + " ";
+        tag.className = "tag";
 
-  tag.addEventListener("click", () => {
-    activeGenre = activeGenre === genre ? null : genre;
-    listCollection.get().then(render);
-  });
+        tag.addEventListener("click", () => {
+          activeGenre = activeGenre === genre ? null : genre;
+          listCollection.get().then(render);
+        });
 
-  g.appendChild(tag);
-});
-  div.appendChild(g);
-}
+        g.appendChild(tag);
+      });
+      div.appendChild(g);
+    }
 
-    div.appendChild(del);
+    // Rechtsbündige Aktionen anhängen
+    div.appendChild(actions);
+
+    // Durchgestrichen / ausgegraut, wenn done
+    if (item.done) {
+      div.style.opacity = "0.5";
+      div.style.textDecoration = "line-through";
+    }
 
     container.appendChild(div);
-
-
   });
 }
 
