@@ -25,16 +25,13 @@ function addItem() {
   const data = { title, date, done: false };
 
   if (editId) {
-    // bearbeiten
     listCollection.doc(editId).update(data);
     editId = null;
     addBtn.textContent = "+";
   } else {
-    // neu hinzufügen
     listCollection.add(data);
   }
 
-  // Felder leeren
   titleInput.value = "";
   dateInput.value = "";
 }
@@ -45,9 +42,17 @@ addBtn.addEventListener("click", addItem);
 // --- Render Liste ---
 function render(snapshot) {
   const container = document.getElementById("lists");
+  if (!container) return;
   container.innerHTML = "";
 
-  snapshot.forEach(doc => {
+  // Abgehakte Einträge nach unten sortieren
+  const docs = snapshot.docs.sort((a, b) => {
+    const ad = a.data().done ? 1 : 0;
+    const bd = b.data().done ? 1 : 0;
+    return ad - bd; // offene zuerst
+  });
+
+  docs.forEach(doc => {
     const item = doc.data();
 
     const div = document.createElement("div");
@@ -68,7 +73,7 @@ function render(snapshot) {
 
     // Bearbeiten Button
     const edit = document.createElement("button");
-    edit.textContent = "✕";
+    edit.textContent = "B";
     edit.className = "delete";
 
     edit.addEventListener("click", () => {
@@ -78,13 +83,42 @@ function render(snapshot) {
       addBtn.textContent = "✓";
     });
 
-    // Actions Container rechts
+    // Notiz Button
+    const noteBtn = document.createElement("button");
+    noteBtn.textContent = "K";
+    noteBtn.className = "noteBtn";
+    if (item.note && item.note.trim() !== "") noteBtn.classList.add("active");
+
+    // Notiz Box
+    const noteBox = document.createElement("div");
+    noteBox.className = "noteBox";
+    noteBox.style.display = "none";
+
+    const noteInput = document.createElement("input");
+    noteInput.type = "text";
+    noteInput.placeholder = "Notiz hinzufügen...";
+    noteInput.value = item.note || "";
+
+    noteBox.appendChild(noteInput);
+
+    noteBtn.addEventListener("click", () => {
+      noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
+    });
+
+    noteInput.addEventListener("change", () => {
+      listCollection.doc(doc.id).update({ note: noteInput.value });
+      if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
+      else noteBtn.classList.remove("active");
+    });
+
+    // Actions Container
     const actions = document.createElement("div");
     actions.className = "actions";
     actions.appendChild(checkbox);
+    actions.appendChild(noteBtn);
     actions.appendChild(edit);
 
-    // erledigt durchstreichen
+    // Done Style
     if (item.done) {
       div.style.opacity = 0.5;
       div.style.textDecoration = "line-through";
@@ -93,9 +127,11 @@ function render(snapshot) {
     // Elemente zusammenfügen
     div.appendChild(text);
     div.appendChild(actions);
+    div.appendChild(noteBox);
+
     container.appendChild(div);
   });
 }
 
-// --- Echtzeit Updates ---
+// Echtzeit Updates
 listCollection.onSnapshot(render);
