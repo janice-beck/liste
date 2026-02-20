@@ -47,98 +47,169 @@ const data = { person, title, link, genres, done: false };
 document.getElementById("addBtn").addEventListener("click", addItem);
 
 function render(snapshot) {
+
   const container = document.getElementById("lists");
   if (!container) return;
 
-container.innerHTML = "";
+  container.innerHTML = "";
 
-const docs = snapshot.docs
-  .sort((a, b) => {
+  const docs = snapshot.docs.sort((a, b) => {
     const ad = a.data().done ? 1 : 0;
     const bd = b.data().done ? 1 : 0;
-    return ad - bd; // offene zuerst
-  })
+    return ad - bd; // offene oben, erledigte unten
+  });
 
-docs.forEach(doc => {
+  docs.forEach(doc => {
 
     const item = doc.data();
 
     if (activeGenre && (!item.genres || !item.genres.includes(activeGenre))) return;
 
-    // Haupt-Item-Container
+    // MAIN DIV
     const div = document.createElement("div");
     div.className = "item";
 
-    // Link / Titel
+
+    // TITLE LINK
     const a = document.createElement("a");
     a.href = item.link;
     a.target = "_blank";
     a.textContent = item.title;
 
-    // Bearbeiten-Button
-    const del = document.createElement("button");
-    del.textContent = "✕";
-    del.className = "delete";
+    div.appendChild(a);
+    div.append(" – " + item.person);
 
-    del.addEventListener("click", () => {
-      document.getElementById("person").value = item.person;
-      document.getElementById("title").value = item.title;
-      document.getElementById("link").value = item.link;
-      document.getElementById("genres").value = item.genres ? item.genres.join(", ") : "";
 
-      editId = doc.id;
-      document.getElementById("addBtn").textContent = "✓";
-    });
-
-    // Checkbox
+    // CHECKBOX
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.done === true;
 
     checkbox.addEventListener("change", () => {
-      listCollection.doc(doc.id).update({ done: checkbox.checked });
+      listCollection.doc(doc.id).update({
+        done: checkbox.checked
+      });
     });
 
-    // Actions-Container (rechts)
+
+    // EDIT BUTTON
+    const del = document.createElement("button");
+    del.textContent = "B";
+    del.className = "delete";
+
+    del.addEventListener("click", () => {
+
+      document.getElementById("person").value = item.person;
+      document.getElementById("title").value = item.title;
+      document.getElementById("link").value = item.link;
+      document.getElementById("genres").value =
+        item.genres ? item.genres.join(", ") : "";
+
+      editId = doc.id;
+      document.getElementById("addBtn").textContent = "✓";
+
+    });
+
+
+    // NOTE BUTTON
+    const noteBtn = document.createElement("button");
+    noteBtn.textContent = "K";
+    noteBtn.className = "noteBtn";
+
+    if (item.note && item.note.trim() !== "") {
+      noteBtn.classList.add("active");
+    }
+
+
+    // NOTE BOX
+    const noteBox = document.createElement("div");
+    noteBox.className = "noteBox";
+    noteBox.style.display = "none";
+
+    const noteInput = document.createElement("input");
+    noteInput.type = "text";
+    noteInput.placeholder = "Voilà Kommentarfunktion";
+    noteInput.value = item.note || "";
+
+    noteBox.appendChild(noteInput);
+
+
+    noteBtn.addEventListener("click", () => {
+
+      noteBox.style.display =
+        noteBox.style.display === "none"
+          ? "block"
+          : "none";
+
+    });
+
+
+    noteInput.addEventListener("change", () => {
+
+      listCollection.doc(doc.id).update({
+        note: noteInput.value
+      });
+
+    });
+
+
+    // ACTIONS CONTAINER
     const actions = document.createElement("div");
     actions.className = "actions";
+
     actions.appendChild(checkbox);
+    actions.appendChild(noteBtn);
     actions.appendChild(del);
 
-    // Append alles zum div
-    div.appendChild(a);
-    div.append(" – " + item.person);
 
+    div.appendChild(actions);
+    div.appendChild(noteBox);
+
+
+    // GENRES
     if (item.genres && item.genres.length) {
+
       const g = document.createElement("div");
       g.className = "genres";
+
       item.genres.forEach(genre => {
+
         const tag = document.createElement("span");
+
         tag.textContent = "#" + genre + " ";
         tag.className = "tag";
 
         tag.addEventListener("click", () => {
-          activeGenre = activeGenre === genre ? null : genre;
+
+          activeGenre =
+            activeGenre === genre ? null : genre;
+
           listCollection.get().then(render);
+
         });
 
         g.appendChild(tag);
+
       });
+
       div.appendChild(g);
+
     }
 
-    // Rechtsbündige Aktionen anhängen
-    div.appendChild(actions);
 
-    // Durchgestrichen / ausgegraut, wenn done
+    // DONE STYLE
     if (item.done) {
+
       div.style.opacity = "0.5";
       div.style.textDecoration = "line-through";
+
     }
 
-    container.appendChild(div);
-  });
-}
 
+    container.appendChild(div);
+
+  });
+
+}
 
 listCollection.onSnapshot(render);
