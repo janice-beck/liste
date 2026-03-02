@@ -126,10 +126,24 @@ function render(snapshot) {
     noteBox.className = "noteBox";
     noteBox.style.display = "none";
 
-    const noteInput = document.createElement("input");
-    noteInput.type = "text";
-    noteInput.placeholder = "Voilà Kommentarfunktion";
-    noteInput.value = item.note || "";
+const noteInput = document.createElement("textarea");
+noteInput.placeholder = "Voilà Kommentarfuntion…";
+noteInput.value = item.note || "";
+noteInput.rows = 2;
+
+// automatisch Höhe anpassen
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+// beim Tippen wachsen
+noteInput.addEventListener("input", () => {
+  autoResize(noteInput);
+});
+
+// auch beim Laden korrekt setzen
+setTimeout(() => autoResize(noteInput), 0);
 
     noteBox.appendChild(noteInput);
 
