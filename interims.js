@@ -14,18 +14,6 @@ const titleInput = document.getElementById("title");
 const listsContainer = document.getElementById("lists");
 let editId = null;
 
-// --- Offene Notizen merken ---
-const openNotes = {}; // doc.id => true/false
-
-// --- Debounce Funktion ---
-function debounce(func, wait) {
-  let timeout;
-  return function(...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
-}
-
 // --- Add Item ---
 function addItem() {
   const title = titleInput.value.trim();
@@ -80,6 +68,7 @@ function render(snapshot) {
     const noteBtn = document.createElement("button");
     noteBtn.textContent = "K";
     noteBtn.className = "noteBtn";
+
     if (item.note && item.note.trim() !== "") {
       noteBtn.classList.add("active");
     }
@@ -87,7 +76,7 @@ function render(snapshot) {
     // --- NOTE BOX ---
     const noteBox = document.createElement("div");
     noteBox.className = "noteBox";
-    noteBox.style.display = openNotes[doc.id] ? "block" : "none";
+    noteBox.style.display = "none"; // Standard geschlossen
 
     const noteInput = document.createElement("textarea");
     noteInput.placeholder = "Voilà Kommentarfunktion…";
@@ -95,23 +84,20 @@ function render(snapshot) {
 
     noteBox.appendChild(noteInput);
 
-    // Auto resize
+    // Auto resize initial
     autoResize(noteInput);
 
-    noteInput.addEventListener("input", () => {
-      autoResize(noteInput);
+    // Resize bei Input
+    noteInput.addEventListener("input", () => autoResize(noteInput));
+
+    // Firestore Update nur beim Verlassen (blur)
+    noteInput.addEventListener("blur", () => {
+      listCollection.doc(doc.id).update({ note: noteInput.value });
     });
 
-    // --- Debounced Firestore Update ---
-    noteInput.addEventListener("input", debounce(() => {
-      listCollection.doc(doc.id).update({ note: noteInput.value });
-    }, 500));
-
-    // --- Toggle Notizfeld ---
+    // Toggle Notizfeld
     noteBtn.addEventListener("click", () => {
-      const isOpen = noteBox.style.display === "block";
-      noteBox.style.display = isOpen ? "none" : "block";
-      openNotes[doc.id] = !isOpen;
+      noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
     });
 
     // --- Edit Button ---
