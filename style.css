@@ -409,13 +409,13 @@ body.termin .form.termin-form button {
   width: 100%;
   margin-top: 5px;
 }
-
 .noteBox textarea {
   width: 100%;
   border: none;
   font-size: 40px;
   font-family: "Times New Roman", Times, serif;
-  color: black;
+  font-style: italic;
+  color: rgb(142, 142, 142);
   background: transparent;
   outline: none;
   padding: 5px 0;
