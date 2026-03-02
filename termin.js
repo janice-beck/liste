@@ -20,7 +20,7 @@ function addItem() {
   const title = titleInput.value.trim();
   const date = dateInput.value.trim();
 
-  if (!title || !date) return; // nichts einfügen, wenn leer
+  if (!title || !date) return;
 
   const data = { title, date, done: false };
 
@@ -36,25 +36,24 @@ function addItem() {
   dateInput.value = "";
 }
 
-// Button Event
 addBtn.addEventListener("click", addItem);
 
-// --- Render Liste ---
+// --- Auto Resize Funktion ---
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+// --- Render ---
 function render(snapshot) {
   const container = document.getElementById("lists");
   if (!container) return;
   container.innerHTML = "";
 
-  // Abgehakte Einträge nach unten sortieren
-  const docs = snapshot.docs.sort((a, b) => {
-    const ad = a.data().done ? 1 : 0;
-    const bd = b.data().done ? 1 : 0;
-    return ad - bd; // offene zuerst
-  });
+  const docs = snapshot.docs.sort((a, b) => (a.data().done ? 1 : 0) - (b.data().done ? 1 : 0));
 
   docs.forEach(doc => {
     const item = doc.data();
-
     const div = document.createElement("div");
     div.className = "item";
 
@@ -66,16 +65,14 @@ function render(snapshot) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.done;
-
     checkbox.addEventListener("change", () => {
       listCollection.doc(doc.id).update({ done: checkbox.checked });
     });
 
-    // Bearbeiten Button
+    // Edit Button
     const edit = document.createElement("button");
     edit.textContent = "B";
     edit.className = "delete";
-
     edit.addEventListener("click", () => {
       document.getElementById("title").value = item.title;
       document.getElementById("date").value = item.date;
@@ -83,32 +80,35 @@ function render(snapshot) {
       addBtn.textContent = "✓";
     });
 
-    // Notiz Button
+    // Note Button
     const noteBtn = document.createElement("button");
     noteBtn.textContent = "K";
     noteBtn.className = "noteBtn";
     if (item.note && item.note.trim() !== "") noteBtn.classList.add("active");
 
-    // Notiz Box
+    // Note Box
     const noteBox = document.createElement("div");
     noteBox.className = "noteBox";
     noteBox.style.display = "none";
 
-    const noteInput = document.createElement("input");
-    noteInput.type = "text";
+    const noteInput = document.createElement("textarea");
     noteInput.placeholder = "Notiz hinzufügen...";
     noteInput.value = item.note || "";
-
+    noteInput.rows = 2;
     noteBox.appendChild(noteInput);
 
-    noteBtn.addEventListener("click", () => {
-      noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
-    });
+    autoResize(noteInput); // initial
 
-    noteInput.addEventListener("change", () => {
+    noteInput.addEventListener("input", () => {
+      autoResize(noteInput);
       listCollection.doc(doc.id).update({ note: noteInput.value });
       if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
       else noteBtn.classList.remove("active");
+    });
+
+    noteBtn.addEventListener("click", () => {
+      noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
+      autoResize(noteInput);
     });
 
     // Actions Container
@@ -124,7 +124,7 @@ function render(snapshot) {
       div.style.textDecoration = "line-through";
     }
 
-    // Elemente zusammenfügen
+    // Zusammenfügen
     div.appendChild(text);
     div.appendChild(actions);
     div.appendChild(noteBox);
