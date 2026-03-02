@@ -14,7 +14,7 @@ const titleInput = document.getElementById("title");
 const listsContainer = document.getElementById("lists");
 let editId = null;
 
-// --- Add Item ---
+// --- Funktion: Item hinzufügen ---
 function addItem() {
   const title = titleInput.value.trim();
   if (!title) return;
@@ -32,27 +32,18 @@ function addItem() {
   titleInput.value = "";
 }
 
-// Button Listener
+// --- Button Listener ---
 addBtn.addEventListener("click", addItem);
 
 // --- Render Funktion ---
 function render(snapshot) {
-  if (!listsContainer) return;
+  listsContainer.innerHTML = ""; // leeren
 
-  // --- Wir iterieren über alle docs ---
   snapshot.forEach(doc => {
     const item = doc.data();
 
-    // --- Prüfen, ob Element schon existiert ---
-    let div = document.getElementById(doc.id);
-    if (!div) {
-      div = document.createElement("div");
-      div.className = "item";
-      div.id = doc.id;  // wichtig, damit Updates die richtige Zeile finden
-      listsContainer.appendChild(div);
-    } else {
-      div.innerHTML = ""; // nur alte Inhalte löschen, nicht die ganze Liste
-    }
+    const div = document.createElement("div");
+    div.className = "item";
 
     // --- Text ---
     const text = document.createElement("span");
@@ -75,6 +66,7 @@ function render(snapshot) {
     // --- Notiz Box ---
     const noteBox = document.createElement("div");
     noteBox.className = "noteBox";
+    // sofort sichtbar, wenn schon Inhalt
     noteBox.style.display = (item.note && item.note.trim() !== "") ? "block" : "none";
 
     const noteInput = document.createElement("textarea");
@@ -83,12 +75,14 @@ function render(snapshot) {
     noteInput.rows = 2;
     noteBox.appendChild(noteInput);
 
+    // Auto Resize Funktion
     function autoResize(el) {
       el.style.height = "auto";
       el.style.height = el.scrollHeight + "px";
     }
     autoResize(noteInput);
 
+    // Input Event: nur speichern und auto-resize, NICHT schließen
     noteInput.addEventListener("input", () => {
       autoResize(noteInput);
       listCollection.doc(doc.id).update({ note: noteInput.value });
@@ -96,6 +90,7 @@ function render(snapshot) {
       else noteBtn.classList.remove("active");
     });
 
+    // Button Event: toggle anzeigen
     noteBtn.addEventListener("click", () => {
       noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
       autoResize(noteInput);
@@ -122,15 +117,14 @@ function render(snapshot) {
     if (item.done) {
       div.style.opacity = 0.5;
       div.style.textDecoration = "line-through";
-    } else {
-      div.style.opacity = 1;
-      div.style.textDecoration = "none";
     }
 
-    // --- Append alles ---
+    // --- Elemente zusammenfügen ---
     div.appendChild(text);
     div.appendChild(actions);
     div.appendChild(noteBox);
+
+    listsContainer.appendChild(div);
   });
 }
 
