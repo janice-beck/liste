@@ -38,14 +38,21 @@ addBtn.addEventListener("click", addItem);
 // --- Render Funktion ---
 function render(snapshot) {
   if (!listsContainer) return;
-  listsContainer.innerHTML = "";
 
+  // --- Wir iterieren über alle docs ---
   snapshot.forEach(doc => {
     const item = doc.data();
 
-    // --- Item Container ---
-    const div = document.createElement("div");
-    div.className = "item";
+    // --- Prüfen, ob Element schon existiert ---
+    let div = document.getElementById(doc.id);
+    if (!div) {
+      div = document.createElement("div");
+      div.className = "item";
+      div.id = doc.id;  // wichtig, damit Updates die richtige Zeile finden
+      listsContainer.appendChild(div);
+    } else {
+      div.innerHTML = ""; // nur alte Inhalte löschen, nicht die ganze Liste
+    }
 
     // --- Text ---
     const text = document.createElement("span");
@@ -76,7 +83,6 @@ function render(snapshot) {
     noteInput.rows = 2;
     noteBox.appendChild(noteInput);
 
-    // Auto Resize
     function autoResize(el) {
       el.style.height = "auto";
       el.style.height = el.scrollHeight + "px";
@@ -90,7 +96,6 @@ function render(snapshot) {
       else noteBtn.classList.remove("active");
     });
 
-    // Toggle Notiz
     noteBtn.addEventListener("click", () => {
       noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
       autoResize(noteInput);
@@ -117,15 +122,17 @@ function render(snapshot) {
     if (item.done) {
       div.style.opacity = 0.5;
       div.style.textDecoration = "line-through";
+    } else {
+      div.style.opacity = 1;
+      div.style.textDecoration = "none";
     }
 
     // --- Append alles ---
     div.appendChild(text);
     div.appendChild(actions);
     div.appendChild(noteBox);
-    listsContainer.appendChild(div);
   });
 }
 
-// Echtzeit Updates
+// --- Echtzeit Updates ---
 listCollection.onSnapshot(render);
