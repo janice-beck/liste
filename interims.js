@@ -68,36 +68,42 @@ function render(snapshot) {
     noteBtn.textContent = "K";
     noteBtn.className = "noteBtn";
 
-    // --- Notiz Box ---
-    const noteBox = document.createElement("div");
-    noteBox.className = "noteBox";
-    noteBox.style.display = "none";
+ // --- Notiz Box ---
+const noteInput = document.createElement("textarea");
+noteInput.placeholder = "Voilà Kommentarfunktion…";
+noteInput.value = item.note || "";
+noteInput.rows = 2;
+noteBox.appendChild(noteInput);
 
-    const noteInput = document.createElement("textarea");
-    noteInput.placeholder = "Voilà Kommentarfunktion…";
-    noteInput.value = item.note || "";
-    noteInput.rows = 2;
-    noteBox.appendChild(noteInput);
+// Direkt sichtbar, falls Text vorhanden
+if (item.note && item.note.trim() !== "") {
+  noteBox.style.display = "block";
+  noteBtn.classList.add("active");
+}
 
-    // Notiz direkt anzeigen, falls schon Text vorhanden
-    if (item.note && item.note.trim() !== "") {
-      noteBox.style.display = "block";
-      noteBtn.classList.add("active");
-    }
+// Auto Resize Funktion
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
 
-    // Auto Resize bei Input
-    noteInput.addEventListener("input", () => {
-      autoResize(noteInput);
-      listCollection.doc(doc.id).update({ note: noteInput.value });
-      if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
-      else noteBtn.classList.remove("active");
-    });
+// Resize bei Eingabe, aber ohne DB-Update
+noteInput.addEventListener("input", () => {
+  autoResize(noteInput);
+});
 
-    // Toggle Notiz anzeigen/verstecken
-    noteBtn.addEventListener("click", () => {
-      noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
-      autoResize(noteInput);
-    });
+// Update in Firebase nur bei Verlassen des Feldes
+noteInput.addEventListener("blur", () => {
+  listCollection.doc(doc.id).update({ note: noteInput.value });
+  if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
+  else noteBtn.classList.remove("active");
+});
+
+// Toggle Notiz anzeigen/verstecken
+noteBtn.addEventListener("click", () => {
+  noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
+  autoResize(noteInput);
+});
 
     // --- Edit Button ---
     const editBtn = document.createElement("button");
