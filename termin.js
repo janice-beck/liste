@@ -94,18 +94,21 @@ function render(snapshot) {
     const noteInput = document.createElement("textarea");
     noteInput.placeholder = "Notiz hinzufügen...";
     noteInput.value = item.note || "";
-    noteInput.rows = 2;
     noteBox.appendChild(noteInput);
 
     autoResize(noteInput); // initial
 
-    noteInput.addEventListener("input", () => {
-      autoResize(noteInput);
+    // Auto resize beim Tippen
+    noteInput.addEventListener("input", () => autoResize(noteInput));
+
+    // Firestore Update erst bei Verlassen
+    noteInput.addEventListener("blur", () => {
       listCollection.doc(doc.id).update({ note: noteInput.value });
       if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
       else noteBtn.classList.remove("active");
     });
 
+    // Toggle Notizfeld
     noteBtn.addEventListener("click", () => {
       noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
       autoResize(noteInput);
