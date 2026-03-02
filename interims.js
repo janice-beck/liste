@@ -35,6 +35,12 @@ function addItem() {
 // --- Button Listener ---
 addBtn.addEventListener("click", addItem);
 
+// --- Auto Resize Funktion für Textarea ---
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
 // --- Render Funktion ---
 function render(snapshot) {
   listsContainer.innerHTML = "";
@@ -53,7 +59,6 @@ function render(snapshot) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.done === true;
-
     checkbox.addEventListener("change", () => {
       listCollection.doc(doc.id).update({ done: checkbox.checked });
     });
@@ -62,7 +67,6 @@ function render(snapshot) {
     const noteBtn = document.createElement("button");
     noteBtn.textContent = "K";
     noteBtn.className = "noteBtn";
-    if (item.note && item.note.trim() !== "") noteBtn.classList.add("active");
 
     // --- Notiz Box ---
     const noteBox = document.createElement("div");
@@ -75,14 +79,13 @@ function render(snapshot) {
     noteInput.rows = 2;
     noteBox.appendChild(noteInput);
 
-    // Auto Resize
-    function autoResize(el) {
-      el.style.height = "auto";
-      el.style.height = el.scrollHeight + "px";
+    // Notiz direkt anzeigen, falls schon Text vorhanden
+    if (item.note && item.note.trim() !== "") {
+      noteBox.style.display = "block";
+      noteBtn.classList.add("active");
     }
 
-    setTimeout(() => autoResize(noteInput), 0);
-
+    // Auto Resize bei Input
     noteInput.addEventListener("input", () => {
       autoResize(noteInput);
       listCollection.doc(doc.id).update({ note: noteInput.value });
@@ -90,17 +93,16 @@ function render(snapshot) {
       else noteBtn.classList.remove("active");
     });
 
-    // Toggle Notiz anzeigen
+    // Toggle Notiz anzeigen/verstecken
     noteBtn.addEventListener("click", () => {
-      noteBox.style.display =
-        noteBox.style.display === "none" ? "block" : "none";
+      noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
+      autoResize(noteInput);
     });
 
     // --- Edit Button ---
     const editBtn = document.createElement("button");
     editBtn.textContent = "B";
     editBtn.className = "delete";
-
     editBtn.addEventListener("click", () => {
       titleInput.value = item.title;
       editId = doc.id;
@@ -120,12 +122,14 @@ function render(snapshot) {
       div.style.textDecoration = "line-through";
     }
 
-    // --- Append ---
+    // --- Elemente zusammenfügen ---
     div.appendChild(text);
     div.appendChild(actions);
     div.appendChild(noteBox);
-
     listsContainer.appendChild(div);
+
+    // Auto Resize nach DOM-Anhang
+    autoResize(noteInput);
   });
 }
 
