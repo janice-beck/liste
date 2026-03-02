@@ -35,12 +35,6 @@ function addItem() {
 // --- Button Listener ---
 addBtn.addEventListener("click", addItem);
 
-// --- Auto Resize Funktion für Textarea ---
-function autoResize(el) {
-  el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
-}
-
 // --- Render Funktion ---
 function render(snapshot) {
   listsContainer.innerHTML = "";
@@ -59,6 +53,7 @@ function render(snapshot) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.done === true;
+
     checkbox.addEventListener("change", () => {
       listCollection.doc(doc.id).update({ done: checkbox.checked });
     });
@@ -67,48 +62,50 @@ function render(snapshot) {
     const noteBtn = document.createElement("button");
     noteBtn.textContent = "K";
     noteBtn.className = "noteBtn";
+    if (item.note && item.note.trim() !== "") noteBtn.classList.add("active");
 
- // --- Notiz Box ---
-const noteInput = document.createElement("textarea");
-noteInput.placeholder = "Voilà Kommentarfunktion…";
-noteInput.value = item.note || "";
-noteInput.rows = 2;
-noteBox.appendChild(noteInput);
+    // --- Notiz Box ---
+    const noteBox = document.createElement("div");
+    noteBox.className = "noteBox";
+    noteBox.style.display = "none";
 
-// Direkt sichtbar, falls Text vorhanden
-if (item.note && item.note.trim() !== "") {
-  noteBox.style.display = "block";
-  noteBtn.classList.add("active");
-}
+    const noteInput = document.createElement("textarea");
+    noteInput.placeholder = "Notiz hinzufügen…";
+    noteInput.value = item.note || "";
+    noteInput.rows = 2;
 
-// Auto Resize Funktion
-function autoResize(el) {
-  el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
-}
+    noteBox.appendChild(noteInput);
 
-// Resize bei Eingabe, aber ohne DB-Update
-noteInput.addEventListener("input", () => {
-  autoResize(noteInput);
-});
+    // --- Auto Resize ---
+    function autoResize(el) {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    }
 
-// Update in Firebase nur bei Verlassen des Feldes
-noteInput.addEventListener("blur", () => {
-  listCollection.doc(doc.id).update({ note: noteInput.value });
-  if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
-  else noteBtn.classList.remove("active");
-});
+    noteInput.addEventListener("input", () => {
+      autoResize(noteInput);
+    });
 
-// Toggle Notiz anzeigen/verstecken
-noteBtn.addEventListener("click", () => {
-  noteBox.style.display = noteBox.style.display === "none" ? "block" : "none";
-  autoResize(noteInput);
-});
+    setTimeout(() => autoResize(noteInput), 0);
+
+    // --- Toggle Notiz ---
+    noteBtn.addEventListener("click", () => {
+      noteBox.style.display =
+        noteBox.style.display === "none" ? "block" : "none";
+    });
+
+    // --- Speichern beim Verlassen ---
+    noteInput.addEventListener("blur", () => {
+      listCollection.doc(doc.id).update({ note: noteInput.value });
+      if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
+      else noteBtn.classList.remove("active");
+    });
 
     // --- Edit Button ---
     const editBtn = document.createElement("button");
     editBtn.textContent = "B";
     editBtn.className = "delete";
+
     editBtn.addEventListener("click", () => {
       titleInput.value = item.title;
       editId = doc.id;
@@ -128,14 +125,12 @@ noteBtn.addEventListener("click", () => {
       div.style.textDecoration = "line-through";
     }
 
-    // --- Elemente zusammenfügen ---
+    // --- Append ---
     div.appendChild(text);
     div.appendChild(actions);
     div.appendChild(noteBox);
-    listsContainer.appendChild(div);
 
-    // Auto Resize nach DOM-Anhang
-    autoResize(noteInput);
+    listsContainer.appendChild(div);
   });
 }
 
