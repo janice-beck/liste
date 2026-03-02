@@ -404,19 +404,26 @@ body.termin .form.termin-form button {
 
 /* NOTE FIELD */
 
+
 .noteBox {
   width: 100%;
   margin-top: 5px;
 }
 
-.noteBox input {
+.noteBox textarea {
   width: 100%;
   border: none;
   font-size: 40px;
   font-family: "Times New Roman", Times, serif;
-  font-style: italic;
-  color: rgb(131, 131, 131);
+  color: black;
   background: transparent;
   outline: none;
-  padding: 5px 0 ;
+  padding: 5px 0;
+
+  resize: none;        /* kein manuelles Ziehen */
+  overflow: hidden;    /* KEIN Scrollbalken */
+
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.2;
 }
