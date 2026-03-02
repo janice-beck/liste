@@ -1,4 +1,4 @@
- // --- Firebase Config ---
+// --- Firebase Config ---
 const firebaseConfig = {
   apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
   authDomain: "liste-j.firebaseapp.com",
@@ -13,7 +13,6 @@ const addBtn = document.getElementById("addBtn");
 const titleInput = document.getElementById("title");
 const listsContainer = document.getElementById("lists");
 let editId = null;
-
 
 // --- Add Item ---
 function addItem() {
@@ -33,10 +32,8 @@ function addItem() {
   titleInput.value = "";
 }
 
-
 // --- Button Listener ---
 addBtn.addEventListener("click", addItem);
-
 
 // --- Render Funktion ---
 function render(snapshot) {
@@ -48,11 +45,9 @@ function render(snapshot) {
     const div = document.createElement("div");
     div.className = "item";
 
-
     // --- Text ---
     const text = document.createElement("span");
     text.textContent = item.title;
-
 
     // --- Checkbox ---
     const checkbox = document.createElement("input");
@@ -60,49 +55,46 @@ function render(snapshot) {
     checkbox.checked = item.done === true;
 
     checkbox.addEventListener("change", () => {
-      listCollection.doc(doc.id).update({
-        done: checkbox.checked
-      });
+      listCollection.doc(doc.id).update({ done: checkbox.checked });
     });
-
 
     // --- Notiz Button ---
     const noteBtn = document.createElement("button");
     noteBtn.textContent = "K";
     noteBtn.className = "noteBtn";
-
-    if (item.note && item.note.trim() !== "") {
-      noteBtn.classList.add("active");
-    }
-
+    if (item.note && item.note.trim() !== "") noteBtn.classList.add("active");
 
     // --- Notiz Box ---
     const noteBox = document.createElement("div");
     noteBox.className = "noteBox";
     noteBox.style.display = "none";
 
-    const noteInput = document.createElement("input");
-    noteInput.type = "text";
-    noteInput.placeholder = "Notiz hinzufügen...";
+    const noteInput = document.createElement("textarea");
+    noteInput.placeholder = "Voilà Kommentarfunktion…";
     noteInput.value = item.note || "";
-
+    noteInput.rows = 2;
     noteBox.appendChild(noteInput);
 
+    // Auto Resize
+    function autoResize(el) {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    }
 
-    // Toggle anzeigen
+    setTimeout(() => autoResize(noteInput), 0);
+
+    noteInput.addEventListener("input", () => {
+      autoResize(noteInput);
+      listCollection.doc(doc.id).update({ note: noteInput.value });
+      if (noteInput.value.trim() !== "") noteBtn.classList.add("active");
+      else noteBtn.classList.remove("active");
+    });
+
+    // Toggle Notiz anzeigen
     noteBtn.addEventListener("click", () => {
       noteBox.style.display =
         noteBox.style.display === "none" ? "block" : "none";
     });
-
-
-    // Speichern
-    noteInput.addEventListener("change", () => {
-      listCollection.doc(doc.id).update({
-        note: noteInput.value
-      });
-    });
-
 
     // --- Edit Button ---
     const editBtn = document.createElement("button");
@@ -115,7 +107,6 @@ function render(snapshot) {
       addBtn.textContent = "✓";
     });
 
-
     // --- Actions Container ---
     const actions = document.createElement("div");
     actions.className = "actions";
@@ -123,13 +114,11 @@ function render(snapshot) {
     actions.appendChild(noteBtn);
     actions.appendChild(editBtn);
 
-
     // --- Done Style ---
     if (item.done) {
       div.style.opacity = 0.5;
       div.style.textDecoration = "line-through";
     }
-
 
     // --- Append ---
     div.appendChild(text);
@@ -139,7 +128,6 @@ function render(snapshot) {
     listsContainer.appendChild(div);
   });
 }
-
 
 // --- Echtzeit Updates ---
 listCollection.onSnapshot(render);
