@@ -87,10 +87,10 @@ function render(snapshot) {
     // Auto resize initial
     autoResize(noteInput);
 
-    // Resize bei Input
+    // Resize bei Tippen
     noteInput.addEventListener("input", () => autoResize(noteInput));
 
-    // Firestore Update nur beim Verlassen (blur)
+    // Firestore Update erst bei Verlassen
     noteInput.addEventListener("blur", () => {
       listCollection.doc(doc.id).update({ note: noteInput.value });
     });
