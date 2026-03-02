@@ -2,129 +2,155 @@
 const firebaseConfig = {
   apiKey: "AIzaSyAZ-_7KekhRyOrCqzdK1-4JOwlqtIrAeuQ",
   authDomain: "liste-j.firebaseapp.com",
-  projectId: "liste-j",
-  storageBucket: "liste-j.firebasestorage.app",
-  messagingSenderId: "950349344673",
-  appId: "1:950349344673:web:707c157b50e02592ea65e0"
+  projectId: "liste-j"
 };
-
-let activeGenre = null;
-let editId = null;
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const page = document.body.dataset.page || "film";
-const listCollection = db.collection(`lists_${page}`);
+// --- Variablen ---
+const listCollection = db.collection("lists_private");
+const addBtn = document.getElementById("addBtn");
+const titleInput = document.getElementById("title");
+const listsContainer = document.getElementById("lists");
+let editId = null;
+
 
 // --- Add Item ---
 function addItem() {
-  const person = document.getElementById("person").value;
-  const title = document.getElementById("title").value;
-  const link = document.getElementById("link").value;
-  const genres = document.getElementById("genres").value
-    .split(",")
-    .map(g => g.trim())
-    .filter(g => g);
+  const title = titleInput.value.trim();
+  if (!title) return;
 
-  if (!title || !link) return;
-
-  const data = { person, title, link, genres, done: false };
+  const data = { title, done: false };
 
   if (editId) {
     listCollection.doc(editId).update(data);
     editId = null;
-    document.getElementById("addBtn").textContent = "+";
+    addBtn.textContent = "+";
   } else {
     listCollection.add(data);
   }
 
-  document.getElementById("title").value = "";
-  document.getElementById("link").value = "";
-  document.getElementById("genres").value = "";
+  titleInput.value = "";
 }
 
-document.getElementById("addBtn").addEventListener("click", addItem);
 
-// --- Render Liste ---
+// --- Button Listener ---
+addBtn.addEventListener("click", addItem);
+
+
+// --- Render Funktion ---
 function render(snapshot) {
-  const container = document.getElementById("lists");
-  if (!container) return;
+  listsContainer.innerHTML = "";
 
-  container.innerHTML = "";
-
-  const docs = snapshot.docs.sort((a, b) => {
-    const ad = a.data().done ? 1 : 0;
-    const bd = b.data().done ? 1 : 0;
-    return ad - bd; // offene oben
-  });
-
-  docs.forEach(doc => {
+  snapshot.forEach(doc => {
     const item = doc.data();
-
-    if (activeGenre && (!item.genres || !item.genres.includes(activeGenre))) return;
 
     const div = document.createElement("div");
     div.className = "item";
 
-    const a = document.createElement("a");
-    a.href = item.link;
-    a.target = "_blank";
-    a.textContent = item.title;
-    div.appendChild(a);
-    div.append(" – " + item.person);
 
+    // --- Text ---
+    const text = document.createElement("span");
+    text.textContent = item.title;
+
+
+    // --- Checkbox ---
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.done === true;
+
     checkbox.addEventListener("change", () => {
-      listCollection.doc(doc.id).update({ done: checkbox.checked });
+      listCollection.doc(doc.id).update({
+        done: checkbox.checked
+      });
     });
 
-    const del = document.createElement("button");
-    del.textContent = "B";
-    del.className = "delete";
-    del.addEventListener("click", () => {
-      document.getElementById("person").value = item.person;
-      document.getElementById("title").value = item.title;
-      document.getElementById("link").value = item.link;
-      document.getElementById("genres").value =
-        item.genres ? item.genres.join(", ") : "";
+
+    // --- Notiz Button ---
+    const noteBtn = document.createElement("button");
+    noteBtn.textContent = "K";
+    noteBtn.className = "noteBtn";
+
+    if (item.note && item.note.trim() !== "") {
+      noteBtn.classList.add("active");
+    }
+
+
+
+    // NOTE BOX
+const noteBox = document.createElement("div");
+noteBox.className = "noteBox";
+noteBox.style.display = "none";
+
+const noteInput = document.createElement("textarea");
+noteInput.placeholder = "Voilà Kommentarfunktion…";
+noteInput.value = item.note || "";
+
+noteBox.appendChild(noteInput);
+
+// Auto resize
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+noteInput.addEventListener("input", () => {
+  autoResize(noteInput);
+});
+
+setTimeout(() => autoResize(noteInput), 0);
+
+// Toggle
+noteBtn.addEventListener("click", () => {
+  noteBox.style.display =
+    noteBox.style.display === "none" ? "block" : "none";
+});
+
+// Speichern
+noteInput.addEventListener("input", () => {
+  listCollection.doc(doc.id).update({
+    note: noteInput.value
+  });
+});
+
+
+
+    // --- Edit Button ---
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "B";
+    editBtn.className = "delete";
+
+    editBtn.addEventListener("click", () => {
+      titleInput.value = item.title;
       editId = doc.id;
-      document.getElementById("addBtn").textContent = "✓";
+      addBtn.textContent = "✓";
     });
 
+
+    // --- Actions Container ---
     const actions = document.createElement("div");
     actions.className = "actions";
     actions.appendChild(checkbox);
-    actions.appendChild(del);
+    actions.appendChild(noteBtn);
+    actions.appendChild(editBtn);
 
-    div.appendChild(actions);
 
-    if (item.genres && item.genres.length) {
-      const g = document.createElement("div");
-      g.className = "genres";
-      item.genres.forEach(genre => {
-        const tag = document.createElement("span");
-        tag.textContent = "#" + genre + " ";
-        tag.className = "tag";
-        tag.addEventListener("click", () => {
-          activeGenre = activeGenre === genre ? null : genre;
-          listCollection.get().then(render);
-        });
-        g.appendChild(tag);
-      });
-      div.appendChild(g);
-    }
-
+    // --- Done Style ---
     if (item.done) {
-      div.style.opacity = "0.5";
+      div.style.opacity = 0.5;
       div.style.textDecoration = "line-through";
     }
 
-    container.appendChild(div);
+
+    // --- Append ---
+    div.appendChild(text);
+    div.appendChild(actions);
+    div.appendChild(noteBox);
+
+    listsContainer.appendChild(div);
   });
 }
+
 
 // --- Echtzeit Updates ---
 listCollection.onSnapshot(render);
